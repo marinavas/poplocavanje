@@ -1,6 +1,6 @@
 import pygame as pg
 
-# uključivanje rada biblioteke PyGame
+
 pg.init()
 
 # postavljamo naslov prozora

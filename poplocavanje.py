@@ -6,6 +6,10 @@ from descartes.patch import PolygonPatch
 import numpy as np
 from math import sin, cos, pi
 from scipy.spatial import Voronoi, voronoi_plot_2d
+import sys
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox
+from PyQt5.QtGui import QIcon, QPen, QColor, QBrush, QPolygonF, QPainter
+from PyQt5.QtCore import pyqtSlot, QPointF
 def affine_h(geom, m):
     return affine_transform(geom, [m[0,0],m[0,1],m[1,0],m[1,1],m[0,2],m[1,2]])
 
@@ -16,13 +20,7 @@ I = np.array([
 def inv(x):
     return np.linalg.inv(x)
 
-# U primeru smo translirali tačku $A(2,3)$ za vektor $(5,6)$.
 
-# ### Funkcije koje konstruišu matrice za osnovne izomejtrijske transformacije
-
-# Funkcija `transl` konstruiše matricu za translaciju:
-
-# In[3]:
 
 
 def transl(tx,ty):
@@ -296,43 +294,28 @@ def p4g(ax,ay,bx,by,cx,cy):
 
 
 def generisi(gen,okvir):
-    xmin,ymin,xmax,ymax = okvir
+    xmin,xmax,ymin,ymax = okvir
     l = []
-    def generisi_rek(iz):
+  
+    def generisi_rek(iz):   
         for i in l:
             if(np.linalg.norm(iz - i) < 0.0001):
                 return
+       
         l.append(iz)
         x,y,_ = iz @ (0,0,1)
-        if(x>xmax*1.2 or x<xmin*1.2 or y>ymax*1.2 or y<ymin*1.2):
+        
+        if(x>xmax*1.5 or x<xmin*1.5 or y>ymax*1.5 or y<ymin*1.5):
             return
+
         for i in gen:
             generisi_rek(i @ iz)
             
     generisi_rek(transl(0,0))
+    
     return l
         
 
-
-# ***
-
-# ## Dirihleova fundamentalna oblast
-
-# ** teorijsko objasnjenje
-
-# ### Konstrukcija Dirihleove fundamentalne oblasti 
-
-# ** opis konsturkcije i impementacija u pajtonu
-
-# ## Podfundamentalna oblast
-
-# ## Modifikacija fundamentalne oblasti na osnovu podfundamentalne
-
-# ### Implementacija 
-
-# ## Konačni primeri
-
-# In[24]:
 
 
 def crtaj(izl,p,axes,color = '#A901DB',a=0.3):
@@ -353,11 +336,12 @@ def crtaj(izl,p,axes,color = '#A901DB',a=0.3):
 
 def generisi_pol(izl,p):
     r = []
+
     for i in izl:
         q =affine_h(p,i)
-        x,y = q.exterior.coords[0] 
-        if(x<2 and x>-2 and y<2 and y>-2):
-            r.append(q)
+        #x,y = q.exterior.coords[0] 
+        #if(x<3 and x>-3 asnd y<3 and y>-3):
+        r.append(q)
     return r
 
 
@@ -405,7 +389,7 @@ class izomrazne:
 
         self.izom_p6 = p6(0,0,2,0, 1, 2*sin(pi/3)/3)
         self.izomgen_p6 = generisi(self.izom_p6,okvir)
-
+        print(len(self.izomgen_p6))
 
         # In[30]:
 
@@ -447,6 +431,21 @@ class izomrazne:
 
         self.izom_cm = cm(0,0,2,0, 1, 4*sin(pi/3)/3)
         self.izomgen_cm= generisi(self.izom_cm,okvir)
-
-
+        
+        self.izomgen = {"p1":self.izomgen_p1,"p2":self.izomgen_p2,"p3":self.izomgen_p3,"p4":self.izomgen_p4,
+        "p4m":self.izomgen_p4m, "p4g":self.izomgen_p4g, "pg":self.izomgen_pg,"pm":self.izomgen_pm,"pmm":self.izomgen_pmm,
+        "p31m":self.izomgen_p31m, "p3m1":self.izomgen_p3m1,"p6":self.izomgen_p6,"p6m":self.izomgen_p6m,"cm":self.izomgen_cm,
+        "cmm":self.izomgen_cmm,}
         # In[47]:
+
+def sh_to_qt(slike,okvir,w,h):
+    slike_qt = []
+    for s in slike:
+        polygon = QPolygonF()
+        for p in s.exterior.coords:
+            polygon.append(QPointF(w-(p[0]-okvir[0])*w/(okvir[1]-okvir[0]),h-(p[1]-okvir[2])*h/(okvir[3]-okvir[2])))
+        slike_qt.append(polygon)
+    return slike_qt
+
+def generisi_Qpol(izl,p,okvir,w,h):
+    return sh_to_qt(generisi_pol(izl,p),okvir,w,h)
