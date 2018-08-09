@@ -1,6 +1,6 @@
 import sys
 import math
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox, QLabel, QComboBox
 from PyQt5.QtGui import QIcon, QPen, QColor, QBrush, QPolygonF, QPainter
 from PyQt5.QtCore import pyqtSlot, QPointF
 from matplotlib import pyplot as plt
@@ -11,12 +11,17 @@ import numpy as np
 #from math import sin, cos, pi
 from scipy.spatial import Voronoi, voronoi_plot_2d
 from poplocavanje import *
-ir = izomrazne([-3,3,-3,3])
+from diagramQT import voronoi_qt
+
+okvir = [-4,4,-3,3]
+w = 400
+h = 300
+ir = izomrazne(okvir)
 class App(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.title = 'PyQt5 textbox - pythonspot.com'
+        self.title = 'Poplocavanje'
         self.left = 10
         self.top = 10
         self.width = 400
@@ -27,45 +32,55 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        # Create textbox
-        self.textbox = QLineEdit(self)
-        self.textbox.move(20, 20)
-        self.textbox.resize(280,40)
+        self.combo = QComboBox(self)
+
+        self.combo.addItems(ir.izomgen.keys())
+        self.combo.activated[str].connect(self.onActivated)  
 
         # Create a button in the window
-        self.button = QPushButton('Show text', self)
-        self.button.move(20,80)
+        self.button = QPushButton('Nacrtaj', self)
+        self.button.move(220,20)
+        self.button.resize(80,40)
 
-        self.slk = MyWidget(self)
-        self.slk.move(20,120)
-        self.slk.resize(350,250)
-
-        # connect button to function on_click
+        self.pbx = PictureBox(self)
+        self.pbx.move(20,70)
+        self.pbx.resize(350,300)
+        self.pbx.grupa = "p1"
         self.button.clicked.connect(self.on_click)
         self.show()
 
+        self.combo.move(50,30)
+        self.combo.resize(80,40)
+        
+        
+        self.show()
+
+
+    def onActivated(self, text):     
+        self.pbx.grupa = text
+    
     @pyqtSlot()
     def on_click(self):
-        self.slk.x0 += 10
+        self.pbx.x0 += 10
         textboxValue = self.textbox.text()
-        QMessageBox.question(self, 'Message - pythonspot.com', "You typed: " + textboxValue, QMessageBox.Ok, QMessageBox.Ok)
-        self.textbox.setText("")
+        self.pbx.grupa = textboxValue
+        self.pbx.update()
 
-class MyWidget(QWidget):
+class PictureBox(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.pen = QPen(QColor(0,0,0))                      # set lineColor
-        self.pen.setWidth(3)                                            # set lineWidth
-        self.brush = QBrush(QColor(255,255,255,255))        # set fillColor  
-                              # polygon with n points, radius, angle of the first point
+        self.pen = QPen(QColor(0,0,0))                  
+        self.pen.setWidth(3)                                        
+        self.brush = QBrush(QColor(255,255,255,0))        
         self.x0 = 70
         self.y0 = 70
+        self.vp = Point(0.8,1.2)
          
     
     def createPoly(self, n, r):
         polygon = QPolygonF() 
-        w = 2 * math.pi / n                                                       # angle per step
-        for i in range(n):                                              # add the points of polygon
+        w = 2 * math.pi / n                                                     
+        for i in range(n):                                              
             t = w * i
             x = r * math.cos(t)
             y = r * math.sin(t)
@@ -74,18 +89,30 @@ class MyWidget(QWidget):
         return polygon
 
     def paintEvent(self, event):
+        
         pol = Polygon([(0.3,0.1),(0.4, 0.1), (0.45,0.7),(0.2,1), (0.1,0.9),(0.3,0.7)])
-        grupa = "p3"
-     #   if(grupa != ""):
-        pol_qt = generisi_Qpol(ir.izomgen[grupa],pol,[-4,4,-3,3],350,280)
+        #pol_qt = generisi_Qpol(ir.izomgen[self.grupa],pol,[-4,4,-3,3],400,300)
+        vor = voronoi_qt(self.vp,okvir,ir.izomgen[self.grupa])
+        pol_qt = vor[0]
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setPen(self.pen)
         painter.setBrush(self.brush) 
         for p in pol_qt:
             painter.drawPolygon(p)
+        for p in vor[1]:
+            painter.drawPoint(ptq(p,okvir,[0,w,0,h]))
+        PictureBox.update(self)
+    
+    def mousePressEvent(self, event):
+        x,y = okok([event.pos().x(),event.pos().y()],[0,w,0,h],okvir)
+        self.vp = Point(x,y)
+        print(x,y)
+        
+
  
- 
+
+
 if __name__ == '__main__':
    
     app = QApplication(sys.argv)

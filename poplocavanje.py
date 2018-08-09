@@ -350,11 +350,16 @@ def generisi_pol(izl,p):
 # 1. Schattschneider, Doris. "The plane symmetry groups: their recognition and notation." *The American Mathematical Monthly* 85.6 (1978): 439-450.
 
 class izomrazne:
+
+
+    
+
+
     def __init__(self, okvir):
-        self.izom_p1 = p1(1,0,0,2)
-        self.izom_p2 = p2(0,0,1,0,0,2)
-        self.izom_pm  = pm(0,0,1,0,0,2)
-        self.izom_pmm = pmm(0,0,1,0,0,2)
+        self.izom_p1 = p1(1,0,0,1.5)
+        self.izom_p2 = p2(0,0,1,0,0,1.5)
+        self.izom_pm  = pm(0,0,1,0,0,1.5)
+        self.izom_pmm = pmm(0,0,1,0,0,1.5)
         self.izom_p3 = p3(0,0,1,0, 0.5,sin(pi/3))
         self.izom_p3m1 = p3m1(0,0,1,0, 0.5,sin(pi/3))
 
@@ -432,10 +437,22 @@ class izomrazne:
         self.izom_cm = cm(0,0,2,0, 1, 4*sin(pi/3)/3)
         self.izomgen_cm= generisi(self.izom_cm,okvir)
         
-        self.izomgen = {"p1":self.izomgen_p1,"p2":self.izomgen_p2,"p3":self.izomgen_p3,"p4":self.izomgen_p4,
-        "p4m":self.izomgen_p4m, "p4g":self.izomgen_p4g, "pg":self.izomgen_pg,"pm":self.izomgen_pm,"pmm":self.izomgen_pmm,
-        "p31m":self.izomgen_p31m, "p3m1":self.izomgen_p3m1,"p6":self.izomgen_p6,"p6m":self.izomgen_p6m,"cm":self.izomgen_cm,
-        "cmm":self.izomgen_cmm,}
+        self.izomgen = {"p1":self.izomgen_p1, 
+        "p2":self.izomgen_p2,
+        "p3":self.izomgen_p3,
+        "p4":self.izomgen_p4,
+        "p4m":self.izomgen_p4m, 
+        "p4g":self.izomgen_p4g, 
+        "pg":self.izomgen_pg,
+        "pm":self.izomgen_pm,
+        "pmm":self.izomgen_pmm,
+        "p31m":self.izomgen_p31m, 
+        "p3m1":self.izomgen_p3m1,
+        "p6":self.izomgen_p6,
+        "p6m":self.izomgen_p6m,
+        "cm":self.izomgen_cm,
+        "cmm":self.izomgen_cmm}
+        
         # In[47]:
 
 def sh_to_qt(slike,okvir,w,h):
@@ -443,9 +460,27 @@ def sh_to_qt(slike,okvir,w,h):
     for s in slike:
         polygon = QPolygonF()
         for p in s.exterior.coords:
-            polygon.append(QPointF(w-(p[0]-okvir[0])*w/(okvir[1]-okvir[0]),h-(p[1]-okvir[2])*h/(okvir[3]-okvir[2])))
+            polygon.append(QPointF((p[0]-okvir[0])*w/(okvir[1]-okvir[0]),h-(p[1]-okvir[2])*h/(okvir[3]-okvir[2])))
         slike_qt.append(polygon)
     return slike_qt
 
+def okok(p,ok1,ok2):
+    x1,y1 = p
+    x2 = (x1 - ok1[0])/(ok1[1]-ok1[0])*(ok2[1]-ok2[0]) + ok2[0]
+    y2 = ok2[3]- (y1 - ok1[2])/(ok1[3]-ok1[2])*(ok2[3]-ok2[2])
+    return(x2,y2)
+
+def ptq(p,ok1,ok2):
+    return QPointF(okok((p.x,p.y),ok1,ok2)[0],okok((p.x,p.y),ok1,ok2)[1])
+
+def ptq(p,ok1,ok2):
+    return QPointF(okok((p[0],p[1]),ok1,ok2)[0],okok((p[0],p[1]),ok1,ok2)[1])
+
+def qts(q,ok1,ok2):
+    return Point(okok(q,ok1,ok2))
+
 def generisi_Qpol(izl,p,okvir,w,h):
     return sh_to_qt(generisi_pol(izl,p),okvir,w,h)
+
+#if __name__ == '__main__':
+    

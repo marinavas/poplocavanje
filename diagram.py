@@ -13,15 +13,6 @@ from poplocavanje import *
 
 
 
-
-
-# In[2]:
-
-
-
-
-# In[3]:
-
 okvir = [-5,-5,5,5]
 xmin,ymin,xmax,ymax = okvir
 sve_slike = []
