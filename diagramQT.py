@@ -19,12 +19,12 @@ def generisi_t(izl,p,okvir):
     for i in izl:
         q = affine_h(p,i)
         x,y = q.x,q.y
-        if(x<okvir[1] and x>okvir[0] and y<okvir[3] and y>okvir[2]):
+        if(x<okvir[1]*1.3 and x>okvir[0]*1.3 and y<okvir[3]*1.3 and y>okvir[2]*1.3):
             r.append(q)
     return r
 
 
-def voronoi_qt(A,okvir,izoms):
+def voronoi_1_qt(A,okvir,okvir2,izoms):
     slike_A = generisi_t(izoms,A,okvir)
     tacke1 = [T(s) for s in slike_A]
     xmin,xmax,ymin,ymax = okvir
@@ -33,10 +33,42 @@ def voronoi_qt(A,okvir,izoms):
     koordinate = [vor.vertices[p] for p in vor.regions[vor.point_region[0]]]
 
     poli = Polygon(koordinate)  
-    p = generisi_Qpol(izoms,poli,okvir,400,300)
+    p = generisi_Qpol(izoms,poli,okvir,okvir2)
     
     #t = crtaj([I],poli,ax,'#CC0099',1)
     return [p,tacke1]
+
+def voronoi_qt(M,okvir,okvir2,izoms):
+    slike_M = [generisi_t(izoms,A,okvir) for A in M]
+    tacke_n=[]
+    n = min([len(slike_j) for slike_j in slike_M])
+
+    for i in range(n):
+        for s in [T(slike_j[i]) for slike_j in slike_M]:
+            tacke_n.append(s)
+    vor = Voronoi(tacke_n)
+
+    pol_U = Polygon()
+    for i in range(len(M)):
+        pol_I = Polygon([vor.vertices[p] for p in vor.regions[vor.point_region[i]]])
+        pol_U = pol_U.union(pol_I)
+    
+    if pol_U.geom_type == 'MultiPolygon':
+        p = [generisi_Qpol(izoms,pol,okvir,okvir2) for pol in pol_U]
+    else:
+        p = [generisi_Qpol(izoms,pol_U,okvir,okvir2)]
+    return [p,tacke_n]
+
+def voronoi_qt_pol(M,okvir,okvir2,izoms):
+    tacke = M
+    (x0,y0) = (M[0].x,M[0].y)
+    d=1
+    for i in range(1,len(M)):
+        (x1,y1) = (M[i].x,M[i].y)
+        for k in np.arange(0,1,1.0/d):
+            tacke.append(Point((1-k)*x0+k*x1, (1-k)*y0+k*y1))        
+        x0,y0 = x1,y1
+    return voronoi_qt(tacke,okvir,okvir2,izoms)
 
 if __name__ == '__main__':
     okvir = [-2,2,-2,2]

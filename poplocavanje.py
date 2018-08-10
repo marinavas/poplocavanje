@@ -455,8 +455,10 @@ class izomrazne:
         
         # In[47]:
 
-def sh_to_qt(slike,okvir,w,h):
+def sh_to_qt(slike,okvir,okvir2):
     slike_qt = []
+    w = okvir2[1]
+    h = okvir2[3]
     for s in slike:
         polygon = QPolygonF()
         for p in s.exterior.coords:
@@ -473,14 +475,14 @@ def okok(p,ok1,ok2):
 def ptq(p,ok1,ok2):
     return QPointF(okok((p.x,p.y),ok1,ok2)[0],okok((p.x,p.y),ok1,ok2)[1])
 
-def ptq(p,ok1,ok2):
+def stq(p,ok1,ok2):
     return QPointF(okok((p[0],p[1]),ok1,ok2)[0],okok((p[0],p[1]),ok1,ok2)[1])
 
 def qts(q,ok1,ok2):
     return Point(okok(q,ok1,ok2))
 
-def generisi_Qpol(izl,p,okvir,w,h):
-    return sh_to_qt(generisi_pol(izl,p),okvir,w,h)
+def generisi_Qpol(izl,p,okvir,okvir2):
+    return sh_to_qt(generisi_pol(izl,p),okvir,okvir2)
 
 #if __name__ == '__main__':
     
