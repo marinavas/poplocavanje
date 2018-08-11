@@ -4,6 +4,8 @@ from scipy.spatial import HalfspaceIntersection, ConvexHull
 from shapely.geometry import Polygon, Point, MultiPoint
 from shapely.affinity import affine_transform
 from shapely.ops import snap
+import rtree as rt
+
 
 def v_cell(i0:int,tacke:List[List[float]]) -> List[List[float]]:
 
@@ -40,8 +42,37 @@ def v_cell_n(n:int,tacke:List[List[float]]):
     return pol_U
 
 
+class rtreeset:
+    def __init__(self, tolerance):
+        self.rtindex = rt.index.Index(interleaved=False)
+        self.tolerance = tolerance
+        self.rbr = 0
+
+    def add(self, x,y):
+        if(self.contains(x,y)):
+            return False
+        self.rtindex.insert(self.rbr, (x,x,y,y))
+        self.rbr += 1
+        return True
+
+    def contains(self,x,y):
+        c = self.rtindex.intersection((x-self.tolerance, x+self.tolerance, y-self.tolerance, y+self.tolerance))
+        return len(list(c))>0
+    
+
+
+
 
 if __name__ == '__main__':
-    hs = v_cell(0,[[0.,0.],[1.,1.],[-1.,-1.],[-1.,1.],[1.,-1.]])
-    print(hs)
+    #hs = v_cell(0,[[0.,0.],[1.,1.],[-1.,-1.],[-1.,1.],[1.,-1.]])
+    #print(hs)
+    ps = rtreeset(0.1)
+    ps.add(0,0)
+    ps.add(0,0.7)
+    print(ps.add(0.14,0.3))
+
+    print(ps.add(0.2,1.0))
+    print(ps.add(0.29,2.0))
+    print(ps.add(0.3,2.01))
+
 
