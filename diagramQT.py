@@ -60,13 +60,16 @@ def voronoi_qt(M,okvir,okvir2,izoms):
     return (p,tacke_n)
 
 def voronoi_qt_pol(M,okvir,okvir2,izoms):
-    tacke = M
+    
     (x0,y0) = (M[0].x,M[0].y)
-    d=1
+    tacke = [Point(x0,y0)]
+    d=10
     for i in range(1,len(M)):
         (x1,y1) = (M[i].x,M[i].y)
-        for k in np.arange(0,1,1.0/d):
-            tacke.append(Point((1-k)*x0+k*x1, (1-k)*y0+k*y1))        
+        for k in range(1,d):
+            a = (d-k)/d
+            b = k/d
+            tacke.append(Point(a*x0+b*x1, a*y0+b*y1))        
         x0,y0 = x1,y1
     return voronoi_qt(tacke,okvir,okvir2,izoms)
 

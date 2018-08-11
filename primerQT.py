@@ -93,8 +93,8 @@ class PictureBox(QWidget):
         
         pol = Polygon([(0.3,0.1),(0.4, 0.1), (0.45,0.7),(0.2,1), (0.1,0.9),(0.3,0.7)])
         #pol_qt = generisi_Qpol(ir.izomgen[self.grupa],pol,[-4,4,-3,3],400,300)
-        pol_vor, tacke_vor = voronoi_qt(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa])
 
+        pol_vor, tacke_vor = voronoi_qt_pol(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa])
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setPen(self.pen)
