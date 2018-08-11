@@ -74,7 +74,7 @@ class PictureBox(QWidget):
         self.brush = QBrush(QColor(255,255,255,0))        
         self.x0 = 70
         self.y0 = 70
-        self.vp = Point(0.8,0.2)
+        self.vp = Point(0.8,0.1)
         self.tacke = [self.vp, Point(0.9,0.3), Point(0.8,0.4)]
          
     
@@ -93,26 +93,29 @@ class PictureBox(QWidget):
         
         pol = Polygon([(0.3,0.1),(0.4, 0.1), (0.45,0.7),(0.2,1), (0.1,0.9),(0.3,0.7)])
         #pol_qt = generisi_Qpol(ir.izomgen[self.grupa],pol,[-4,4,-3,3],400,300)
-        vor = voronoi_qt_pol(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa])
-        pol_qt = vor[0]
+        pol_vor, tacke_vor = voronoi_qt(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa])
+
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setPen(self.pen)
         painter.setBrush(self.brush) 
-        if(len(self.tacke)!= 0):
-            for p in pol_qt:
-                for q in p:
-                    painter.drawPolygon(q)
-            for p in vor[1]:
-                painter.drawPoint(stq(p,okvir,[0,w,0,h]))
+        #if(len(self.tacke)!= 0):
+        for p in pol_vor:
+            for q in p:
+                painter.drawPolygon(q)
+        for p in tacke_vor:
+            painter.drawPoint(stq(p,okvir,[0,w,0,h]))
         
         painter.setPen(QPen(QColor(125,0,125)))
         painter.setBrush(QBrush(QColor(125,0,125,125)) )
-        if(len(self.tacke)!= 0):
-            for p in self.tacke:
-                painter.drawPoint(ptq(p,okvir,[0,w,0,h]))
-            for p in pol_qt:
+        if(True):
+        #    for p in self.tacke:
+        #        painter.drawPoint(ptq(p,okvir,[0,w,0,h]))
+            for p in pol_vor:
                 painter.drawPolygon(p[0])
+        painter.setPen(QPen(QColor(0,125,125)))
+        painter.setBrush(QBrush(QColor(0,125,125,125)))
+       
             
         #PictureBox.update(self)
     

@@ -6,7 +6,7 @@ import numpy as np
 from math import sin, cos, pi
 from scipy.spatial import Voronoi, voronoi_plot_2d
 from poplocavanje import *
-
+from voronoi import v_cell, v_cell_n
 
 
 
@@ -28,15 +28,18 @@ def voronoi_1_qt(A,okvir,okvir2,izoms):
     slike_A = generisi_t(izoms,A,okvir)
     tacke1 = [T(s) for s in slike_A]
     xmin,xmax,ymin,ymax = okvir
-    vor = Voronoi(tacke1)
+    #vor = Voronoi(tacke1)
 
-    koordinate = [vor.vertices[p] for p in vor.regions[vor.point_region[0]]]
+    #koordinate = [vor.vertices[p] for p in vor.regions[vor.point_region[0]]]
+    koordinate = v_cell(0,tacke1)
+   
 
     poli = Polygon(koordinate)  
+
     p = generisi_Qpol(izoms,poli,okvir,okvir2)
     
     #t = crtaj([I],poli,ax,'#CC0099',1)
-    return [p,tacke1]
+    return (p,tacke1)
 
 def voronoi_qt(M,okvir,okvir2,izoms):
     slike_M = [generisi_t(izoms,A,okvir) for A in M]
@@ -46,18 +49,15 @@ def voronoi_qt(M,okvir,okvir2,izoms):
     for i in range(n):
         for s in [T(slike_j[i]) for slike_j in slike_M]:
             tacke_n.append(s)
-    vor = Voronoi(tacke_n)
+ #   vor = Voronoi(tacke_n)
 
-    pol_U = Polygon()
-    for i in range(len(M)):
-        pol_I = Polygon([vor.vertices[p] for p in vor.regions[vor.point_region[i]]])
-        pol_U = pol_U.union(pol_I)
+    pol_U = v_cell_n(len(M),tacke_n)
     
     if pol_U.geom_type == 'MultiPolygon':
         p = [generisi_Qpol(izoms,pol,okvir,okvir2) for pol in pol_U]
     else:
         p = [generisi_Qpol(izoms,pol_U,okvir,okvir2)]
-    return [p,tacke_n]
+    return (p,tacke_n)
 
 def voronoi_qt_pol(M,okvir,okvir2,izoms):
     tacke = M
