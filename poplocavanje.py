@@ -10,6 +10,10 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox
 from PyQt5.QtGui import QIcon, QPen, QColor, QBrush, QPolygonF, QPainter
 from PyQt5.QtCore import pyqtSlot, QPointF
+from geom import rtreeset
+
+
+
 def affine_h(geom, m):
     return affine_transform(geom, [m[0,0],m[0,1],m[1,0],m[1,1],m[0,2],m[1,2]])
 
@@ -296,18 +300,16 @@ def p4g(ax,ay,bx,by,cx,cy):
 def generisi(gen,okvir):
     xmin,xmax,ymin,ymax = okvir
     l = []
-  
-    def generisi_rek(iz):   
-        for i in l:
-            if(np.linalg.norm(iz - i) < 0.0001):
-                return
-       
-        l.append(iz)
-        x,y,_ = iz @ (0,0,1)
+    rt = rtreeset(0.00001)
+    def generisi_rek(iz): 
+        x,y,_ = iz @ (0,0,1) 
         
-        if(x>xmax*1.5 or x<xmin*1.5 or y>ymax*1.5 or y<ymin*1.5):
+        if(rt.add(x,y)):
+            l.append(iz)
+        else:
             return
-
+        if(x>xmax*1.5 or x<xmin*1.5 or y>ymax*1.5 or y<ymin*1.5 ):
+            return
         for i in gen:
             generisi_rek(i @ iz)
             
@@ -357,11 +359,11 @@ class izomrazne:
 
     def __init__(self, okvir):
         self.izom_p1 = p1(1,0,0,1.5)
-        self.izom_p2 = p2(0,0,1,0,0,1.5)
-        self.izom_pm  = pm(0,0,1,0,0,1.5)
-        self.izom_pmm = pmm(0,0,1,0,0,1.5)
-        self.izom_p3 = p3(0,0,1,0, 0.5,sin(pi/3))
-        self.izom_p3m1 = p3m1(0,0,1,0, 0.5,sin(pi/3))
+        self.izom_p2 = p2(-0.5,-0.5,1,0,0,1.5)
+        self.izom_pm  = pm(-0.5,-0.5,1,0,0,1.5)
+        self.izom_pmm = pmm(-0.5,-0.5,1,0,0,1.5)
+        self.izom_p3 = p3(-0.5,-0.5,0.5,-0.5, 0,sin(pi/3)-0.5)
+     #   self.izom_p3m1 = p3m1(-0.5,-0.5,0.5,-0.5, 0,sin(pi/3)-0.5)
 
 
         # In[27]:
@@ -372,69 +374,69 @@ class izomrazne:
         self.izomgen_pm = generisi(self.izom_pm,okvir)
         self.izomgen_pmm= generisi(self.izom_pmm,okvir)
         self.izomgen_p3 = generisi(self.izom_p3,okvir)
-        self.izomgen_p3m1 = generisi(self.izom_p3m1,okvir)
+      #  self.izomgen_p3m1 = generisi(self.izom_p3m1,okvir)
 
 
         # In[132]:
 
 
-        self.izom_pg = pg(0,0,1,0,0,2)
+        self.izom_pg = pg(-0.5,-0.5,1,0,0,2)
         self.izomgen_pg= generisi(self.izom_pg,okvir)
 
 
         # In[28]:
 
 
-        self.izom_p31m = p31m(0,0,2,0, 1, 2*sin(pi/3)/3)
+        self.izom_p31m = p31m(-0.5,-0.5,1.5,-0.5, 0.5, 2*sin(pi/3)/3-0.5)
         self.izomgen_p31m = generisi(self.izom_p31m,okvir)
 
 
         # In[29]:
 
 
-        self.izom_p6 = p6(0,0,2,0, 1, 2*sin(pi/3)/3)
+        self.izom_p6 = p6(-0.5,-0.5,1.5,-0.5, 0.5, 2*sin(pi/3)/3-0.5)
         self.izomgen_p6 = generisi(self.izom_p6,okvir)
         print(len(self.izomgen_p6))
 
         # In[30]:
 
 
-        self.izom_p6m = p6m(0,0,1,0, 1, 2*sin(pi/3)/3)
-        self.izomgen_p6m = generisi(self.izom_p6m,okvir)
+        #self.izom_p6m = p6m(-0.5,-0.5,0.5,-0.5, 0.5, 2*sin(pi/3)/3-0.5)
+        #self.izomgen_p6m = generisi(self.izom_p6m,okvir)
 
 
         # In[31]:
 
 
-        self.izom_p4= p4(0,0,1,0,1,1)
+        self.izom_p4= p4(-0.5,-0.5,0.5,-0.5, 0.5,0.5)
         self.izomgen_p4=generisi(self.izom_p4,okvir)
 
 
         # In[32]:
 
 
-        self.izom_p4m= p4m(0,0,1,0,1,1)
+        self.izom_p4m= p4m(-0.5,-0.5,0.5,-0.5, 0.5,0.5)
         self.izomgen_p4m=generisi(self.izom_p4m,okvir)
 
 
         # In[39]:
 
 
-        self.izom_p4g= p4g(0,0,1,0,1,1)
+        self.izom_p4g= p4g(-0.5,-0.5,0.5,-0.5, 0.5,0.5)
         self.izomgen_p4g=generisi(self.izom_p4g,okvir)
 
 
         # In[91]:
 
 
-        self.izom_cmm= cmm(0,0,1,0,1,1)
+        self.izom_cmm= cmm(-0.5,-0.5,0.5,-0.5, 0.5,0.5)
         self.izomgen_cmm=generisi(self.izom_cmm,okvir)
 
 
         # In[106]:
 
 
-        self.izom_cm = cm(0,0,2,0, 1, 4*sin(pi/3)/3)
+        self.izom_cm = cm(-0.5,-0.5,1.5,-0.5, 0.5, 4*sin(pi/3)/3-0.5)
         self.izomgen_cm= generisi(self.izom_cm,okvir)
         
         self.izomgen = {"p1":self.izomgen_p1, 
@@ -447,9 +449,9 @@ class izomrazne:
         "pm":self.izomgen_pm,
         "pmm":self.izomgen_pmm,
         "p31m":self.izomgen_p31m, 
-        "p3m1":self.izomgen_p3m1,
+#        "p3m1":self.izomgen_p3m1,
         "p6":self.izomgen_p6,
-        "p6m":self.izomgen_p6m,
+        #"p6m":self.izomgen_p6m,
         "cm":self.izomgen_cm,
         "cmm":self.izomgen_cmm}
         

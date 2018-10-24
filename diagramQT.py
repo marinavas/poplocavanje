@@ -6,7 +6,7 @@ import numpy as np
 from math import sin, cos, pi
 from scipy.spatial import Voronoi, voronoi_plot_2d
 from poplocavanje import *
-from voronoi import v_cell, v_cell_n
+from geom import v_cell, v_cell_n
 
 
 
@@ -59,11 +59,13 @@ def voronoi_qt(M,okvir,okvir2,izoms):
         p = [generisi_Qpol(izoms,pol_U,okvir,okvir2)]
     return (p,tacke_n)
 
+PODELA = 4
+
 def voronoi_qt_pol(M,okvir,okvir2,izoms):
     
     (x0,y0) = (M[0].x,M[0].y)
     tacke = [Point(x0,y0)]
-    d=10
+    d= PODELA + 1
     for i in range(1,len(M)):
         (x1,y1) = (M[i].x,M[i].y)
         for k in range(1,d):
