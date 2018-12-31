@@ -1,22 +1,32 @@
 
 # coding: utf-8
 
+# # razvoj prebačen na vs code zbog pyqt5
+
 # In[1]:
-from matplotlib import pyplot as plt
-from shapely.geometry import Polygon, Point, MultiPoint
-from shapely.affinity import affine_transform
-from descartes.patch import PolygonPatch
-import numpy as np
-from math import sin, cos, pi
-from scipy.spatial import Voronoi, voronoi_plot_2d
-from poplocavanje import *
 
 
+get_ipython().run_line_magic('run', 'uvod.ipynb')
 
-okvir = [-5,-5,5,5]
-xmin,ymin,xmax,ymax = okvir
+
+# In[2]:
+
+
+def generisi_pol(izl,p):
+    r = []
+    for i in izl:
+        q =affine_h(p,i)
+        x,y = q.exterior.coords[0] 
+        if(x<4 and x>-4 and y<4 and y>-4):
+            r.append(q)
+    return r
+
+
+# In[3]:
+
+
 sve_slike = []
-ir = izomrazne(okvir)
+
 
 # In[4]:
 
@@ -31,7 +41,7 @@ def T(A):
 def generisi_t(izl,p):
     r = []
     for i in izl:
-        q = affine_h(p,i)
+        q =affine_h(p,i)
         x,y = q.x,q.y
         if(x<4 and x>-4 and y<4 and y>-4):
             r.append(q)
@@ -47,8 +57,9 @@ def generisi_t(izl,p):
 #pol =dopuni(izomgen,pol)
 pol = Polygon([(0.3,0.1),(0.4, 0.1), (0.45,0.7),(0.2,1), (0.1,0.9),(0.3,0.7)])
 #pol = Polygon([(0.3,0.4),(0.35, 0.4), (0.4,0.7),(0.7,0.8), (0.8,0.9),(0.3,0.9)])
-tr = Polygon([(0.1,0.02),(1.9, 0.02), (1,0.5)])
-izomgen = ir.izomgen_p6
+tr = Polygon([(0,0),(2, 0), (1,0.58)])
+rec1 = Polygon([(0,0.02),(1, 0.02), (1,2), (0,2)])
+izomgen = izomgen_p6
 xmin,xmax,ymin,ymax = (-3,3,-3,3)
 okvir = [-3,3,-3,3]
 bx = plt.axes()  
@@ -57,13 +68,60 @@ bx.set_xticks(range(xmin,xmax+1))
 bx.set_ylim(ymin,ymax)
 bx.set_yticks(range(ymin,ymax+1))
 bx.set_aspect(1)
-crtaj(izomgen,tr,bx,'#00FFFF')
-crtaj(izomgen,pol,bx,'#CC0099', 0.3)
-crtaj([I],pol,bx,'#CC0099', 1)
+#crtaj(izomgen,tr,bx,'#00FFFF')
+crtaj(izomgen,tr,bx,'#EEEEEE', 0.5)
+crtaj(izomgen,pol,bx,'#CC0099', 1)
+#crtaj([I],pol,bx,'#CC0099', 1)
 plt.show()
 
 
 # In[7]:
+
+
+bx = plt.axes()  
+bx.set_xlim(xmin,xmax)
+bx.set_xticks(range(xmin,xmax+1))
+bx.set_ylim(ymin,ymax)
+bx.set_yticks(range(ymin,ymax+1))
+bx.set_aspect(1)
+crtaj(izomgen,pol,bx,'#CC0099', 1)
+
+plt.show()
+
+
+# In[8]:
+
+
+rec2 = Polygon([(0.5,0),(1.5, 0), (2.5,2), (1.5,2)])
+bx = plt.axes()  
+bx.set_xlim(xmin,xmax)
+bx.set_xticks(range(xmin,xmax+1))
+bx.set_ylim(ymin,ymax)
+bx.set_yticks(range(ymin,ymax+1))
+bx.set_aspect(1)
+crtaj(izomgen_p1,rec2,bx,'#EEEEEE', 0.5)
+crtaj(izomgen_p1,pol,bx,'#CC0099',1)
+plt.show()
+
+
+# In[9]:
+
+
+rec1 = Polygon([(0,0),(1, 0), (1,1), (0,1)])
+izomgen = izomgen_p6
+bx = plt.axes()  
+bx.set_xlim(xmin,xmax)
+bx.set_xticks(range(xmin,xmax+1))
+bx.set_ylim(ymin,ymax)
+bx.set_yticks(range(ymin,ymax+1))
+bx.set_aspect(1)
+#crtaj(izomgen_p4,rec1,bx,'#00FFFF')
+crtaj(izomgen_p4,pol,bx,'#CC0099',1)
+
+plt.show()
+
+
+# In[10]:
 
 
 bx = plt.axes()  
@@ -78,13 +136,13 @@ crtaj([I],pol,bx,'#CC0099', 1)
 plt.show()
 
 
-# In[8]:
+# In[11]:
 
 
 slike = generisi_pol(izomgen,pol)
 
 
-# In[9]:
+# In[12]:
 
 
 def dopuni(izom_gen, pol):
@@ -96,7 +154,7 @@ def dopuni(izom_gen, pol):
     return pol1
 
 
-# In[10]:
+# In[13]:
 
 
 def namesti(ax,xmin,xmax,ymin,ymax):
@@ -107,7 +165,7 @@ def namesti(ax,xmin,xmax,ymin,ymax):
     ax.set_aspect(1)
 
 
-# In[11]:
+# In[14]:
 
 
 tacke1 = []
@@ -127,14 +185,14 @@ ax.set_yticks(range(ymin,ymax+1))
 ax.set_aspect(1)
 
 
-crtaj(izomgen,poli,ax,'#00FFFF')
+crtaj(izomgen,poli,ax,'#EEEEEE', 0.5)
 plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C9.')
 plt.plot([A.x],[A.y],'b.')
 crtaj([I],poli,ax,'#CC0099',1)
 plt.show()
 
 
-# In[12]:
+# In[15]:
 
 
 tacke1 = []
@@ -155,14 +213,14 @@ ax.set_yticks(range(ymin,ymax+1))
 ax.set_aspect(1)
 
 
-crtaj(izomgen,poli,ax,'#00FFFF')
+crtaj(izomgen,poli,ax,'#EEEEEE', 0.5)
 plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C9.')
 plt.plot([A.x],[A.y],'b.')
 crtaj([I],poli,ax,'#CC0099',1)
 plt.show()
 
 
-# In[13]:
+# In[16]:
 
 
 tacke1 = []
@@ -183,14 +241,14 @@ ax.set_yticks(range(ymin,ymax+1))
 ax.set_aspect(1)
 
 
-crtaj(izomgen,poli,ax,'#00FFFF')
+crtaj(izomgen,poli,ax,'#EEEEEE', 0.5)
 plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C9.')
 plt.plot([A.x],[A.y],'b.')
 crtaj([I],poli,ax,'#CC0099',1)
 plt.show()
 
 
-# In[14]:
+# In[17]:
 
 
 tacke1 = []
@@ -211,14 +269,14 @@ ax.set_yticks(range(ymin,ymax+1))
 ax.set_aspect(1)
 
 
-crtaj(izomgen,poli,ax,'#00FFFF')
+crtaj(izomgen,poli,ax,'#EEEEEE', 0.5)
 plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C9.')
 plt.plot([A.x],[A.y],'b.')
 crtaj([I],poli,ax,'#CC0099',1)
 plt.show()
 
 
-# In[15]:
+# In[18]:
 
 
 tacke2 = []
@@ -241,14 +299,14 @@ pol_U=pol_A.union(pol_B)
 ax = plt.axes()
 namesti(ax,-3,3,-3,3)
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
 crtaj([I],pol_U,ax,'#CC0099',1)
 plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C9.')
 plt.plot([T(s)[0] for s in slike_B],[T(s)[1] for s in slike_B],'C1.')
 plt.show()
 
 
-# In[16]:
+# In[19]:
 
 
 tacke3 = []
@@ -280,7 +338,7 @@ namesti(ax,-3,3,-3,3)
 
 
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
 crtaj([I],pol_U,ax,'#CC0099',1)
 plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C9.')
 plt.plot([T(s)[0] for s in slike_B],[T(s)[1] for s in slike_B],'C1.')
@@ -289,7 +347,7 @@ plt.plot([T(s)[0] for s in slike_C],[T(s)[1] for s in slike_C],'C2.')
 plt.show()
 
 
-# In[17]:
+# In[20]:
 
 
 ax = plt.axes()
@@ -297,16 +355,16 @@ namesti(ax,-3,3,-3,3)
 crtaj([I],pol_U,ax,'#0000FF',0.7)
 
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
-crtaj([I], pol,ax,'#0000FF',1)
-crtaj([I],pol_U,ax,'#CC0099',1)
-crtaj([I], pol,ax,'#0000FF',0.2)
-crtaj(izomgen, pol,ax,'#0000FF',0.2)
-plt.plot([t[0] for t in tacke3],[t[1] for t in tacke3],'C0.')
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
+crtaj([I],pol_U,ax,'#0099CC',0.7)
+crtaj(izomgen, pol,ax,'#FFFFFF',1)
+crtaj(izomgen, pol,ax,'#CC0099',0.1)
+crtaj([I], pol,ax,'#CC0099',1)
+plt.plot([t[0] for t in tacke3],[t[1] for t in tacke3],'C6.')
 plt.show()
 
 
-# In[18]:
+# In[21]:
 
 
 tacke4 = []
@@ -338,7 +396,7 @@ namesti(ax,-3,3,-3,3)
 
 
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
 crtaj([I],pol_U,ax,'#CC0099',1)
 plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C1.')
 plt.plot([T(s)[0] for s in slike_B],[T(s)[1] for s in slike_B],'C9.')
@@ -347,7 +405,7 @@ plt.plot([T(s)[0] for s in slike_D],[T(s)[1] for s in slike_D],'C2.')
 plt.show()
 
 
-# In[19]:
+# In[22]:
 
 
 ax = plt.axes()
@@ -355,16 +413,18 @@ namesti(ax,-3,3,-3,3)
 crtaj([I],pol_U,ax,'#0000FF',0.7)
 
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
-crtaj([I], pol,ax,'#0000FF',1)
-crtaj([I],pol_U,ax,'#CC0099',1)
-crtaj([I], pol,ax,'#0000FF',0.2)
-crtaj(izomgen, pol,ax,'#0000FF',0.2)
-plt.plot([t[0] for t in tacke4],[t[1] for t in tacke4],'C0.')
+
+plt.plot([t[0] for t in tacke4],[t[1] for t in tacke4],'C6.')
+
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
+crtaj([I],pol_U,ax,'#0099CC',0.7)
+crtaj(izomgen, pol,ax,'#FFFFFF',1)
+crtaj(izomgen, pol,ax,'#CC0099',0.1)
+crtaj([I], pol,ax,'#CC0099',1)
 plt.show()
 
 
-# In[20]:
+# In[23]:
 
 
 
@@ -394,17 +454,19 @@ for i in range(len(M)):
 
 ax = plt.axes()
 namesti(ax,-3,3,-3,3)
-plt.plot([t[0] for t in tacke_n],[t[1] for t in tacke_n],'C0.')
+plt.plot([t[0] for t in tacke_n],[t[1] for t in tacke_n],'C6.')
 sve_slike.append([izomgen, pol_U,pol])
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
-crtaj([I],pol_U,ax,'#CC0099',1)
-crtaj(izomgen, pol,ax,'#0000FF',0.2)
-#crtaj([I], pol,ax,'#0000FF',1)
+
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
+crtaj([I],pol_U,ax,'#0099CC',0.7)
+crtaj(izomgen, pol,ax,'#FFFFFF',1)
+crtaj(izomgen, pol,ax,'#CC0099',0.1)
+crtaj([I], pol,ax,'#CC0099',1)
 plt.show()
 
 
-# In[21]:
+# In[24]:
 
 
 
@@ -434,17 +496,18 @@ for i in range(len(M)):
 
 ax = plt.axes()
 namesti(ax,-3,3,-3,3)
-plt.plot([t[0] for t in tacke_n],[t[1] for t in tacke_n],'C0.')
+plt.plot([t[0] for t in tacke_n],[t[1] for t in tacke_n],'C6.')
 sve_slike.append([izomgen, pol_U,pol])
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
-crtaj([I],pol_U,ax,'#CC0099',1)
-crtaj(izomgen, pol,ax,'#0000FF',0.2)
-#crtaj([I], pol,ax,'#0000FF',1)
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
+crtaj([I],pol_U,ax,'#0099CC',0.7)
+crtaj(izomgen, pol,ax,'#FFFFFF',1)
+crtaj(izomgen, pol,ax,'#CC0099',0.1)
+crtaj([I], pol,ax,'#CC0099',1)
 plt.show()
 
 
-# In[22]:
+# In[25]:
 
 
 M = [Point(p) for p in pol.exterior.coords]
@@ -476,46 +539,22 @@ namesti(ax,-3,3,-3,3)
 #plt.plot([t[0] for t in tacke_n],[t[1] for t in tacke_n],'C0.')
 sve_slike.append([izomgen, pol_U,pol])
 
-crtaj(izomgen,pol_U,ax,'#00FFFF')
-crtaj([I],pol_U,ax,'#CC0099',1)
-crtaj(izomgen, pol,ax,'#0000FF',0.2)
-crtaj([I], pol,ax,'#0000FF',1)
+crtaj(izomgen,pol_U,ax,'#EEEEEE', 0.5)
+crtaj([I],pol_U,ax,'#0099CC',0.7)
+crtaj(izomgen, pol,ax,'#CC0099',0.3)
+crtaj([I], pol,ax,'#CC0099',1)
 plt.show()
 
 
-# In[23]:
+# In[26]:
 
 
 for s in sve_slike:
     ax = plt.axes()
     namesti(ax,-3,3,-3,3)
-    crtaj(s[0],s[1],ax,'#00FFFF')
+    crtaj(s[0],s[1],ax,'#EEEEEE', 0.5)
     crtaj([I],s[1],ax,'#CC0099',1)
     crtaj(s[0], s[2],ax,'#0000FF',0.2)
     crtaj([I], s[2],ax,'#0000FF',1)
     plt.show()
-
-tacke1 = []
-
-A = Point(0.3,0.7)
-slike_A = generisi_t(izomgen_p6,A)
-tacke1 = [T(s) for s in slike_A]
-
-vor = Voronoi(tacke1)
-#fig = voronoi_plot_2d(vor)
-
-poli = Polygon([vor.vertices[p] for p in vor.regions[vor.point_region[0]]])  
-ax = plt.axes()
-ax.set_xlim(xmin,xmax)
-ax.set_xticks(range(xmin,xmax+1))
-ax.set_ylim(ymin,ymax)
-ax.set_yticks(range(ymin,ymax+1))
-ax.set_aspect(1)
-
-
-crtaj(izomgen_p6,poli,ax,'#00FFAA')
-plt.plot([T(s)[0] for s in slike_A],[T(s)[1] for s in slike_A],'C9.')
-plt.plot([A.x],[A.y],'b.')
-crtaj([I],poli,ax,'#FFFF00',1)
-plt.show()
 
