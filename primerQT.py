@@ -16,6 +16,7 @@ from diagramQT import voronoi_qt, voronoi_qt_pol,voronoi_1_qt, PODELA
 okvir = [-3,3,-2.25,2.25]
 w = 800
 h = 600
+
 ir = izomrazne([-4.8,4.8,-3.6,3.6])
 class App(QMainWindow):
 
@@ -26,7 +27,9 @@ class App(QMainWindow):
         self.top = 10
         self.width = 900
         self.height = 700
+        self.smooth = 0
         self.initUI()
+        
 
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -42,14 +45,19 @@ class App(QMainWindow):
         self.button.move(220,20)
         self.button.resize(80,40)
 
+        self.button1 = QPushButton('omeksaj', self)
+        self.button1.move(320,20)
+        self.button1.resize(80,40)
+
         self.pbx = PictureBox(self)
         self.pbx.move(20,70)
         self.pbx.resize(w,h)
         self.pbx.grupa = "p1"
         self.button.clicked.connect(self.on_click)
+        self.button1.clicked.connect(self.on_click1)
         self.show()
 
-        self.combo.move(50,30)
+        self.combo.move(50,20)
         self.combo.resize(80,40)
         
         
@@ -65,11 +73,16 @@ class App(QMainWindow):
         self.pbx.tacke=[Point(0,0)]
         self.pbx.repaint()
 
+    @pyqtSlot()
+    def on_click1(self):
+        self.pbx.smooth = 1
+        self.pbx.repaint()
+        self.pbx.smooth = 0
 
 class PictureBox(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        
+        self.smooth = 0
         self.pen = QPen(QColor(0,0,0))                  
         self.pen.setWidth(3)                                        
         self.brush = QBrush(QColor(255,255,255,0))        
@@ -91,17 +104,22 @@ class PictureBox(QWidget):
         return polygon
 
     def paintEvent(self, event):
-        pol_vor, tacke_vor = voronoi_qt_pol(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa])
+        #pol_vor, tacke_vor = voronoi_qt_pol(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa])
+        if(self.smooth ==1):
+             pol_vor, tacke_vor = voronoi_qt_pol(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa],5)
+        else:
+             pol_vor, tacke_vor = voronoi_qt_pol(self.tacke,okvir,[0,w,0,h],ir.izomgen[self.grupa],1)
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
         
         painter.setPen(QPen(QColor(0,125,125)))
-        painter.setBrush(QBrush(QColor(255,255,0,125)))
+        painter.setBrush(QBrush(QColor(200,0,120,200)))
         for p in pol_vor:
             painter.drawPolygon(p[0])
         
         painter.setPen(self.pen)
-        painter.setBrush(self.brush) 
+        #painter.setBrush(self.brush) 
+        painter.setBrush(QBrush(QColor(255,255,255,50)))
         for p in pol_vor:
             for q in p:
                 painter.drawPolygon(q)
