@@ -52,7 +52,7 @@ def voronoi_qt(M,okvir,okvir2,izoms):
  #   vor = Voronoi(tacke_n)
 
     pol_U = v_cell_n(len(M),tacke_n)
-    
+ 
     if pol_U.geom_type == 'MultiPolygon':
         p = [generisi_Qpol(izoms,pol,okvir,okvir2) for pol in pol_U]
     else:
@@ -62,7 +62,7 @@ def voronoi_qt(M,okvir,okvir2,izoms):
 PODELA = 1
 
 def voronoi_qt_pol(M,okvir,okvir2,izoms, podela):
-    
+  
     (x0,y0) = (M[0].x,M[0].y)
     tacke = [Point(x0,y0)]
     d= podela + 1
@@ -74,6 +74,7 @@ def voronoi_qt_pol(M,okvir,okvir2,izoms, podela):
             tacke.append(Point(a*x0+b*x1, a*y0+b*y1))        
         x0,y0 = x1,y1
     return voronoi_qt(tacke,okvir,okvir2,izoms)
+
 
 if __name__ == '__main__':
     okvir = [-2,2,-2,2]

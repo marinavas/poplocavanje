@@ -45,7 +45,7 @@ class App(QMainWindow):
         self.button.move(220,20)
         self.button.resize(80,40)
 
-        self.button1 = QPushButton('omeksaj', self)
+        self.button1 = QPushButton('umeksaj', self)
         self.button1.move(320,20)
         self.button1.resize(80,40)
 
